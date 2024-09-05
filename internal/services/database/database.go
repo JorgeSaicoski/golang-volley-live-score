@@ -25,7 +25,8 @@ type Match struct {
 	MatchDate time.Time `json:"match_date"`
 }
 
-func Connect() {
+func Connect() error {
+	var err error
 	DB, err := gorm.Open(sqlite.Open("volley_live_data.db"), &gorm.Config{})
 
 	if err != nil {
@@ -37,5 +38,7 @@ func Connect() {
 	}
 
 	DB.AutoMigrate(&Match{}, &Set{})
+
+	return nil
 
 }

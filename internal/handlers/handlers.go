@@ -26,6 +26,7 @@ func GetMatches(c *gin.Context) {
 	if err := database.DB.Preload("Sets").Offset(offset).Limit(pageSize).Find(&matches).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	}
+
 	c.JSON(http.StatusOK, matches)
 }
 
