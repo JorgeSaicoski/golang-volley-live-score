@@ -1,6 +1,7 @@
 package database
 
 import (
+	"fmt"
 	"time"
 
 	"gorm.io/driver/sqlite"
@@ -23,22 +24,20 @@ type Match struct {
 	IsLive    bool      `json:"is_live"`
 	Win       bool      `json:"win"`
 	MatchDate time.Time `json:"match_date"`
+	Adversary string    `json:"adversary"`
 }
 
 func Connect() error {
 	var err error
-	DB, err := gorm.Open(sqlite.Open("volley_live_data.db"), &gorm.Config{})
+	DB, err = gorm.Open(sqlite.Open("volley_live_data.db"), &gorm.Config{})
 
 	if err != nil {
-		panic("failed to connect database")
+		return fmt.Errorf("failed to connect database: %w", err)
 	}
 
 	if err := DB.AutoMigrate(&Match{}, &Set{}); err != nil {
-		panic("failed to migrate")
+		return fmt.Errorf("failed to migrate database: %w", err)
 	}
 
-	DB.AutoMigrate(&Match{}, &Set{})
-
 	return nil
-
 }

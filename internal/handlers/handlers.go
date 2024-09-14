@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -46,7 +47,14 @@ func CreateMatch(c *gin.Context) {
 	var match database.Match
 
 	if err := c.ShouldBindJSON(&match); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON"})
+		return
+	}
+
+	fmt.Printf("Received match data: %+v\n", match)
+
+	if database.DB == nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database connection is not established"})
 		return
 	}
 
