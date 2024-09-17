@@ -12,18 +12,18 @@ var DB *gorm.DB
 
 type Set struct {
 	ID         uint `json:"id" gorm:"primaryKey"`
-	MatchID    uint `json:"match_id"`
-	ScoreTeamA int  `json:"score_team_a"`
-	ScoreTeamB int  `json:"score_team_b"`
+	MatchID    uint `json:"matchId"`
+	ScoreTeamA int  `json:"scoreTeamA"`
+	ScoreTeamB int  `json:"scoreTeamB"`
 	Win        bool `json:"win"`
 }
 
 type Match struct {
 	ID        uint      `json:"id" gorm:"primaryKey"`
 	Sets      []Set     `json:"sets" gorm:"foreignKey:MatchID"`
-	IsLive    bool      `json:"is_live"`
+	IsLive    bool      `json:"isLive"`
 	Win       bool      `json:"win"`
-	MatchDate time.Time `json:"match_date"`
+	MatchDate time.Time `json:"matchDate"`
 	Adversary string    `json:"adversary"`
 }
 
