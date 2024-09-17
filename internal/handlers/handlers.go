@@ -11,6 +11,7 @@ import (
 
 func GetMatches(c *gin.Context) {
 	var matches []database.Match
+	var count int64
 	page, err := strconv.Atoi(c.DefaultQuery("page", "1"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid page number"})
@@ -23,14 +24,18 @@ func GetMatches(c *gin.Context) {
 	}
 
 	offset := (page - 1) * pageSize
-	fmt.Printf("Received page data: %+v\n", page)
-	fmt.Printf("Received pageSize data: %+v\n", pageSize)
 
 	if err := database.DB.Preload("Sets").Offset(offset).Limit(pageSize).Find(&matches).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	}
+	if err := database.DB.Model(&database.Match{}).Count(&count).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	}
 
-	c.JSON(http.StatusOK, matches)
+	c.JSON(http.StatusOK, gin.H{
+		"matches": matches,
+		"count":   count,
+	})
 }
 
 func GetMatchByID(c *gin.Context) {
