@@ -16,13 +16,15 @@ func GetMatches(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid page number"})
 		return
 	}
-	pageSize, err := strconv.Atoi(c.DefaultQuery("pageSize", "10"))
+	pageSize, err := strconv.Atoi(c.DefaultQuery("size", "10"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid page size"})
 		return
 	}
 
 	offset := (page - 1) * pageSize
+	fmt.Printf("Received page data: %+v\n", page)
+	fmt.Printf("Received pageSize data: %+v\n", pageSize)
 
 	if err := database.DB.Preload("Sets").Offset(offset).Limit(pageSize).Find(&matches).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
