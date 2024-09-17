@@ -25,12 +25,15 @@ func GetMatches(c *gin.Context) {
 
 	offset := (page - 1) * pageSize
 
-	if err := database.DB.Preload("Sets").Offset(offset).Limit(pageSize).Find(&matches).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-	}
 	if err := database.DB.Model(&database.Match{}).Count(&count).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	}
+
+	if err := database.DB.Preload("Sets").Offset(offset).Limit(pageSize).Find(&matches).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	}
+
+	fmt.Println(matches, count)
 
 	c.JSON(http.StatusOK, gin.H{
 		"matches": matches,
