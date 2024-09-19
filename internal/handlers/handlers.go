@@ -33,8 +33,6 @@ func GetMatches(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	}
 
-	fmt.Println(matches, count)
-
 	c.JSON(http.StatusOK, gin.H{
 		"matches": matches,
 		"count":   count,
