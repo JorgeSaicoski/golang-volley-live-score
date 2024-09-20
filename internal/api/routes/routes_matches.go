@@ -7,7 +7,9 @@ import (
 
 func SetupRoutes(r *gin.Engine) {
 	r.GET("/matches", handlers.GetMatches)
+	r.GET("/matches/live", handlers.GetMatchLive)
 	r.GET("/matches/:id", handlers.GetMatchByID)
+	r.PATCH("/matches/:id/live", handlers.ToggleMatchLive)
 	r.POST("/matches", handlers.CreateMatch)
 	r.PUT("/matches/:id", handlers.UpdateMatch)
 }

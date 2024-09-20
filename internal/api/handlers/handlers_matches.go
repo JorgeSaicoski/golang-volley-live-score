@@ -41,6 +41,17 @@ func GetMatches(c *gin.Context) {
 	})
 }
 
+func GetMatchLive(c *gin.Context) {
+	var match database.Match
+
+	if err := database.DB.Preload("Sets").Where("is_live = ?", true).First(&match).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, match)
+}
+
 func GetMatchByID(c *gin.Context) {
 	var match database.Match
 
@@ -96,4 +107,33 @@ func UpdateMatch(c *gin.Context) {
 
 	c.JSON(http.StatusOK, match)
 
+}
+
+func ToggleMatchLive(c *gin.Context) {
+	var match database.Match
+	matchID := c.Param("id")
+
+	if err := database.DB.First(&match, matchID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Match not found"})
+		return
+	}
+
+	var liveMatch database.Match
+	if err := database.DB.Where("is_live = ?", true).First(&liveMatch).Error; err == nil && liveMatch.ID != match.ID {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Can't have 2 or more matches live simultaneously"})
+		return
+	}
+
+	if match.IsLive {
+		match.IsLive = false
+	} else {
+		match.IsLive = true
+	}
+
+	if err := database.DB.Save(&match).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update match status"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Match live status updated", "match": match})
 }
