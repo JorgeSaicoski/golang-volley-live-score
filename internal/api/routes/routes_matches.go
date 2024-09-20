@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"github.com/JorgeSaicoski/golang-volley-live-score/internal/matches/handlers"
+	"github.com/JorgeSaicoski/golang-volley-live-score/internal/api/handlers"
 	"github.com/gin-gonic/gin"
 )
 
