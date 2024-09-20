@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -13,6 +12,9 @@ func GetMatches(c *gin.Context) {
 	var matches []database.Match
 	var count int64
 	page, err := strconv.Atoi(c.DefaultQuery("page", "1"))
+	if page < 1 {
+		page = 1
+	}
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid page number"})
 		return
@@ -46,6 +48,7 @@ func GetMatchByID(c *gin.Context) {
 
 	if err := database.DB.Preload("Sets").First(&match, matchId).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
 	}
 
 	c.JSON(http.StatusOK, match)
@@ -58,8 +61,6 @@ func CreateMatch(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON"})
 		return
 	}
-
-	fmt.Printf("Received match data: %+v\n", match)
 
 	if database.DB == nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database connection is not established"})
@@ -81,6 +82,7 @@ func UpdateMatch(c *gin.Context) {
 
 	if err := database.DB.Preload("Sets").First(&match, matchId).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
 	}
 
 	if err := c.ShouldBindJSON(&match); err != nil {

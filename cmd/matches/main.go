@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/JorgeSaicoski/golang-volley-live-score/internal/routes"
+	"github.com/JorgeSaicoski/golang-volley-live-score/internal/matches/routes"
 	"github.com/JorgeSaicoski/golang-volley-live-score/internal/services/database"
 	"github.com/gin-gonic/gin"
 
