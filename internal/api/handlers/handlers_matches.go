@@ -118,18 +118,26 @@ func ToggleMatchLive(c *gin.Context) {
 		return
 	}
 
-	var liveMatch database.Match
-	if err := database.DB.Where("is_live = ?", true).First(&liveMatch).Error; err == nil && liveMatch.ID != match.ID {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Can't have 2 or more matches live simultaneously"})
+	if match.IsLive {
+		match.IsLive = false
+		if err := database.DB.Save(&match).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update match status"})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"message": "Match live status updated", "match": match})
 		return
 	}
 
-	if match.IsLive {
-		match.IsLive = false
-	} else {
-		match.IsLive = true
+	var previousLiveMatch database.Match
+	if err := database.DB.Where("is_live = ?", true).First(&previousLiveMatch).Error; err == nil {
+		previousLiveMatch.IsLive = false
+		if err := database.DB.Save(&previousLiveMatch).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to change the currently live match status"})
+			return
+		}
 	}
 
+	match.IsLive = true
 	if err := database.DB.Save(&match).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update match status"})
 		return
