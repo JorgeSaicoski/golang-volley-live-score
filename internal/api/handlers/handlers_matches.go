@@ -6,6 +6,7 @@ import (
 
 	"github.com/JorgeSaicoski/golang-volley-live-score/internal/services/database"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 func GetMatches(c *gin.Context) {
@@ -45,7 +46,11 @@ func GetMatchLive(c *gin.Context) {
 	var match database.Match
 
 	if err := database.DB.Preload("Sets").Where("is_live = ?", true).First(&match).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		if gorm.ErrRecordNotFound == err {
+			c.JSON(http.StatusNotFound, gin.H{"error": "No live match found"})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error fetching live match"})
 		return
 	}
 
