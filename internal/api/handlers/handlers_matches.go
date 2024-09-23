@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -46,7 +47,7 @@ func GetMatchLive(c *gin.Context) {
 	var match database.Match
 
 	if err := database.DB.Preload("Sets").Where("is_live = ?", true).First(&match).Error; err != nil {
-		if gorm.ErrRecordNotFound == err {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			c.JSON(http.StatusNotFound, gin.H{"error": "No live match found"})
 			return
 		}

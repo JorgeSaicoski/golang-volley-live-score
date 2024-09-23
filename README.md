@@ -21,6 +21,7 @@ The **Golang Volley Live Score** project aims to:
 - **Golang**: The primary language for the backend.
 - **Ionic**: Used for the frontend (not included in this repository).
 - **Docker**: For containerization and deployment.
+- **Nix**: Used for creating reproducible development environments.
 
 ## Getting Started
 
@@ -28,6 +29,7 @@ The **Golang Volley Live Score** project aims to:
 
 - Golang installed on your machine.
 - Docker installed on your machine.
+- Nix installed on your machine (optional, for development).
 
 ### Installation
 
@@ -47,7 +49,7 @@ The **Golang Volley Live Score** project aims to:
 3. Run the application:
 
    ```bash
-   go run main.go
+   go run cmd/matches/main.go
    ```
 
 ### Running with Docker
@@ -64,9 +66,33 @@ The **Golang Volley Live Score** project aims to:
    docker run -p 8080:8080 golang-volley-live-score
    ```
 
-## API Endpoints
+Alternatively, you can use Docker Compose for orchestrating multiple services, such as the matches and sets services:
 
-### Matches
+1. Start the application using Docker Compose:
+
+   ```bash
+   docker-compose up --build
+   ```
+
+2. Access the application at `http://localhost:8080` or `http://localhost:8081` depending on the service.
+
+### Using Nix for Development
+
+You can use Nix to ensure a consistent development environment. Nix handles dependencies like Docker and Golang, making the development setup reproducible.
+
+1. Install Nix: [Nix Installation Guide](https://nixos.org/manual/nix/stable/#chap-installation).
+
+2. Enter the Nix Shell:
+
+   ```bash
+   nix-shell
+   ```
+
+   This will open a shell with Docker and Golang installed and ready to use.
+
+### API Endpoints
+
+#### Matches
 
 - `GET /matches`: Get all matches (with pagination).
 - `GET /matches/:id`: Get a match by ID.
@@ -74,14 +100,13 @@ The **Golang Volley Live Score** project aims to:
 - `PUT /matches/:id`: Update a match.
 - `DELETE /matches/:id`: Delete a match.
 
-### Sets
+#### Sets
 
 - `GET /sets`: Get all sets.
 - `GET /sets/:id`: Get a set by ID.
 - `POST /sets`: Create a new set.
 - `PUT /sets/:id`: Update a set.
 - `DELETE /sets/:id`: Delete a set.
-
 
 ## Contributing
 
@@ -94,3 +119,4 @@ Some code is repeated in the project. Refactoring and updating this code will he
 ## License
 
 This project is licensed under the MIT License.
+
